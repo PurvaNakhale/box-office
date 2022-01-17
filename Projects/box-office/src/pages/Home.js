@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import ActorGrid from '../components/actors/ActorGrid';
 import MainPageLayout from '../components/MainPageLayout';
-import ShowGrid from '../components/shows/ShowGrid';
 import { apiGet } from '../mics/config';
+import ShowGrid from '../components/shows/ShowGrid';
+import ActorGrid from '../components/actors/ActorGrid';
 import { useLastQuery } from '../mics/coustom-hooks';
+import {
+  SearchInput,
+  RadioInputsWrapper,
+  SearchButtonWrapper,
+} from './Home.styled';
+import CustomRadio from '../components/CustomRadio';
 
 const Home = () => {
   const [input, setInput] = useLastQuery();
@@ -11,7 +17,6 @@ const Home = () => {
   const [searchOption, setSearchOption] = useState('shows');
 
   const isShowsSearch = searchOption === 'shows';
-
   const onSearch = () => {
     apiGet(`/search/${searchOption}?q=${input}`).then(result => {
       setResults(result);
@@ -34,7 +39,7 @@ const Home = () => {
 
   const renderResults = () => {
     if (results && results.length === 0) {
-      return <div>NO results</div>;
+      return <div>No results</div>;
     }
 
     if (results && results.length > 0) {
@@ -50,41 +55,41 @@ const Home = () => {
 
   return (
     <MainPageLayout>
-      <input
+      <SearchInput
         type="text"
-        placeholder="Search For Something"
+        placeholder="Search for something"
         onChange={onInputChange}
         onKeyDown={onKeyDown}
         value={input}
       />
 
-      <div>
-        <label htmlFor="shows-search">
-          Shows
-          <input
+      <RadioInputsWrapper>
+        <div>
+          <CustomRadio
+            label="Shows"
             id="shows-search"
-            type="radio"
             value="shows"
             checked={isShowsSearch}
             onChange={onRadioChange}
           />
-        </label>
+        </div>
 
-        <label htmlFor="actors-search">
-          Actors
-          <input
+        <div>
+          <CustomRadio
+            label="Actors"
             id="actors-search"
-            type="radio"
             value="people"
             checked={!isShowsSearch}
             onChange={onRadioChange}
           />
-        </label>
-      </div>
+        </div>
+      </RadioInputsWrapper>
 
-      <button type="button" onClick={onSearch}>
-        Search
-      </button>
+      <SearchButtonWrapper>
+        <button type="button" onClick={onSearch}>
+          Search
+        </button>
+      </SearchButtonWrapper>
       {renderResults()}
     </MainPageLayout>
   );
